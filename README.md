@@ -1,2 +1,9 @@
 # LMS-2.0_Learning-Management-System
 The LMS (Learning Management System) is a comprehensive platform designed to streamline and enhance the training and development processes within an organization. This robust system supports three distinct user roles—Admin, Instructor, and Learner—each with tailored functionalities to optimize course management and learning experiences.
+
+Key Features
+Admin Role: The Admin is the highest authority within the LMS, equipped with full access to all system features. Admins can manage Instructor and Learner accounts, as well as oversee the creation and assignment of courses. They have the ability to create, assign, and deassign courses to specific learners, ensuring that training resources are appropriately distributed. Admins can handle a variety of course materials, including video files, PDF documents, text files, and image files. This role also includes the power to oversee and adjust any aspects of the courses and user accounts to ensure smooth operation of the LMS.
+
+Instructor Role: Instructors have the capability to create and manage their own courses within the LMS. They can design course content and assign it to learners, facilitating targeted training and professional development. While Instructors do not have the same broad administrative privileges as Admins, they can efficiently manage the learning materials and resources associated with their courses, ensuring learners receive relevant and updated training content.
+
+Learner Role: Learners are the end-users of the LMS, focused on accessing and engaging with course materials. Their interaction is limited to viewing and using the resources provided by Instructors and Admins. Learners benefit from a structured learning environment where they can access video tutorials, PDF guides, text documents, and images designed to upskill and enhance their professional capabilities.
