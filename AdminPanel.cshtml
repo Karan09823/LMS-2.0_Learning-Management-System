@@ -1,0 +1,542 @@
+﻿@{
+    Layout = null;
+    var adminModel = ViewBag.AdminModel;
+    var userlist = ViewBag.userlist as List<LMS.Models.MasterRecord>;
+
+    var TCourse = ViewBag.TotalCourse;
+    var TLearner = ViewBag.TotalLearner;
+    var TActiveLearner = ViewBag.TotalActiveLearner;
+    var TInstructor = ViewBag.TotalInstructor;
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>LMS : AdminPanel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="~/Content/SideBar-Navbar/navbarcommon.css" rel="stylesheet" />
+</head>
+<body>
+    <!--sidebar-->
+    <nav>
+        <div class="logo_name">
+
+            <span class="logo_name mx-4 ">ADMIN</span>
+        </div>
+        <ul>
+            <li>
+
+                <a href="#" class="" data-bs-toggle="modal" data-bs-target="#AdminViewModal">
+                    <i class="fa-solid fa-eye"></i>
+                    <span class="link-name"> View Profile</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#" class="" data-bs-toggle="modal" data-bs-target="#AdminEditModal">
+                    <i class="fa-solid fa-user-pen"></i>
+                    <span class="link-name">Edit Profile</span>
+                </a>
+            </li>
+
+
+            <li>
+
+                <a href="@Url.Action("AddCourseByAdmin","Admin")">
+                    <i class="fa-solid fa-folder-plus"></i>
+                    <span class="link-name"> Add Course</span>
+                </a>
+            </li>
+            <li>
+                <a href="@Url.Action("Admin_courses", "Admin")">
+                    <i class="uil uil-book"></i>
+                    <span class="link-name">Courses</span>
+                </a>
+            </li>
+            <li>
+                <a href="@Url.Action("Admin_Learner", "Admin")">
+                    <i class="fa-solid fa-file-circle-check"></i>
+                    <span class="link-name">Assign Course</span>
+                </a>
+            </li>
+
+
+
+
+        </ul>
+        <div class="logout">
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#AdminLogout">
+                Logout
+            </button>
+        </div>
+    </nav>
+
+    <!--banner-->
+    <section class="dashboard">
+        <div class="top">
+            <i class="company-logo">
+                <img src="~/HomeBanner/lms_logo-removebg-preview.png" />
+            </i>
+
+            <div class="profile">
+                <span class="link-name mx-4">@adminModel.Admin_Name</span>
+
+                <img src="~/HomeBanner/blank-profile-picture-973460_1280.png" alt="Profile Picture" />
+            </div>
+        </div>
+
+        <div class="dash-content">
+            <div class="boxes">
+                <div class="box">
+                    <i class="uil uil-users-alt"></i>
+                    <span class="text">Total Instructors</span>
+                    <span class="number">@TInstructor</span>
+                </div>
+                <div class="box">
+                    <i class="uil uil-user-plus"></i>
+                    <span class="text">Total Learners</span>
+                    <span class="number">@TLearner</span>
+                </div>
+                <div class="box">
+                    <i class="fa-solid fa-book-open-reader mt-3"></i>
+                    <span class="text">Total Active Learners</span>
+                    <span class="number">@TActiveLearner</span>
+                </div>
+                <div class="box">
+                    <i class="uil uil-book"></i>
+                    <span class="text"> Courses</span>
+                    <span class="number">@TCourse</span>
+                </div>
+
+            </div>
+        </div>
+
+        <!--user table-->
+        <div class="card mt-5">
+            <div class="card-header" style="background-color: #3ABEF9; color: white;">
+                <div class="d-flex align-items-center">
+                    User List
+                    <label class="form-label" style="margin-left:100px;">Search User</label>
+                    <input class="form-control mx-1" style="max-width:200px;" id="myInput" autocomplete="off" onkeyup="searchTable() " />
+                    <label class="form-label" style="margin-left:100px;">Search By Role</label>
+                    <input class="form-control mx-1" style="max-width:200px;" id="myRoleInput" autocomplete="off" onkeyup="searchUserRole() " />
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table" id="myTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">UserId</th>
+                            <th scope="col">UserName</th>
+                            <th scope="col">UserMail</th>
+                            <th scope="col">UserPassword</th>
+                            <th scope="col">UserRole</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (userlist != null && userlist.Any())
+                        {
+                            foreach (var user in userlist)
+                            {
+                                <tr>
+                                    <td>@user.UserId</td>
+                                    <td>@user.UserName</td>
+                                    <td>@user.UserEmail</td>
+                                    <td>@user.UserPassword</td>
+                                    <td>@user.UserRole</td>
+                                    <td>
+                                        <button class="btn-sm btn-warning"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editUserModal"
+                                                data-id="@user.UserId"
+                                                data-name="@user.UserName"
+                                                data-email="@user.UserEmail"
+                                                data-password="@user.UserPassword">
+                                            Edit
+                                        </button>
+                                        <button class="btn-sm btn-danger"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteUserModal"
+                                                data-id="@user.UserId">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5">No User Available</td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Admin View Modal -->
+    <div class="modal fade" id="AdminViewModal" tabindex="-1" aria-labelledby="AdminViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #3ABEF9; color: white; ">
+                    <h5 class="modal-title" id="AdminViewModalLabel">Admin Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="adminName" class="form-label">Name:</label>
+                        <p id="adminName" class="form-text">@adminModel.Admin_Name</p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="adminEmail" class="form-label">Email:</label>
+                        <p id="adminEmail" class="form-text">@adminModel.Admin_Email</p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="adminPassword" class="form-label">Password:</label>
+                        <p id="adminPassword" class="form-text">@adminModel.Admin_password</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Edit Modal -->
+    <div class="modal fade" id="AdminEditModal" tabindex="-1" aria-labelledby="AdminEditModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #3ABEF9; color: white;">
+                    <h5 class="modal-title" id="AdminEditModalLabel">Edit Admin Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="closebtn" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="adminEditForm" method="post" action="@Url.Action("UpdateAdmin", "Admin")">
+                        <div class="mb-3">
+                            <label for="AdminNameEdit" class="form-label">Name:</label>
+                            <input type="text" id="AdminNameEdit" name="AdminName" class="form-control" autocomplete="off" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="AdminPasswordEdit" class="form-label">Password:</label>
+                            <div class="input-group">
+                                <input type="password" id="AdminPasswordEdit" name="AdminPassword" class="form-control" autocomplete="off" />
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" form="adminEditForm" class="btn btn-warning" id="AdminEditModalUpdate">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Logout Modal -->
+    <div class="modal fade" id="AdminLogout" tabindex="-1" aria-labelledby="AdminLogoutLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #3ABEF9; color: white;">
+                    <h6 class="modal-title" id="AdminLogoutLabel">Sure to Logout?</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="logoutButton">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Admin Edit Message Modal -->
+    <div class="modal fade" id="AdminEditMsgModal" tabindex="-1" aria-labelledby="AdminEditMsgModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="AdminEditMsgModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="AdminEditMsg"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #3ABEF9; color: white;">
+                    <h5 class="modal-title" id="editUserModalLabel">Edit User Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm" method="post" action="@Url.Action("UpdateUser", "Admin")">
+                        <input type="hidden" id="editUserId" name="UserId" value="" />
+                        <div class="mb-3">
+                            <label for="editUserName" class="form-label">Username:</label>
+                            <input type="text" class="form-control" id="editUserName" name="UserName" value="" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editUserEmail" class="form-label">Email:</label>
+                            <input type="email" class="form-control" id="editUserEmail" name="UserEmail" value="" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editUserPassword" class="form-label">Password:</label>
+                            <input type="password" class="form-control" id="editUserPassword" name="UserPassword" value="" required>
+                        </div>
+                      
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-warning">Update</button>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+
+    <!-- Delete User Modal -->
+    <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #3ABEF9; color: white;">
+                    <h5 class="modal-title" id="deleteUserModalLabel">Delete User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this user?</p>
+                    <form id="deleteUserForm" method="post" action="@Url.Action("DeleteUser", "Admin")">
+                        <input type="hidden" id="deleteUserId" name="UserId" value="" />
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+
+            // Populate Edit Modal with current admin details
+            $('#AdminEditModal').on('show.bs.modal', function () {
+                var modal = $(this);
+                modal.find('#AdminNameEdit').val('@adminModel.Admin_Name');
+                modal.find('#AdminPasswordEdit').val('@adminModel.Admin_password');
+            });
+
+            // Handle Admin Edit Form submission
+            $("#AdminEditModalUpdate").click(function (e) {
+                e.preventDefault();
+
+                if ($("#adminEditForm").valid()) {
+                    var formData = new FormData($("#adminEditForm")[0]);
+
+                    $.ajax({
+                        url: $("#adminEditForm").attr("action"),
+                        type: $("#adminEditForm").attr("method"),
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            showEditMessage(response.message);
+                        },
+                        error: function (response) {
+                            var errorMessage = response.responseJSON ? response.responseJSON.message : "An error occurred";
+                            showEditMessage(errorMessage);
+                        }
+                    });
+                }
+            });
+
+            // Admin Edit Form validation
+            $("#adminEditForm").validate({
+                errorClass: "error",
+                rules: {
+                    AdminName: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 20
+                    },
+                    AdminPassword: {
+                        required: true,
+                        minlength: 6
+                    }
+                },
+                messages: {
+                    AdminName: {
+                        required: "Name field cannot be empty",
+                        minlength: "Name must be at least 3 characters",
+                        maxlength: "Name must not exceed 20 characters"
+                    },
+                    AdminPassword: {
+                        required: "Password field cannot be empty",
+                        minlength: "Password must be at least 6 characters"
+                    }
+                }
+            });
+
+            // Reset and reload Admin Edit Form
+            $("#closebtn").click(function () {
+                $("#adminEditForm")[0].reset();
+                window.location.reload();
+            });
+
+            // Handle Admin Logout
+            $("#logoutButton").click(function () {
+                $.ajax({
+                    url: '@Url.Action("Adminlogout", "Admin")',
+                    type: 'POST',
+                    success: function (response) {
+                        if (response.success) {
+                            // Redirect to login page
+                            window.location.href = '@Url.Action("Welcome", "Home")'; // Adjust to your login route
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert("An error occurred: " + error);
+                    }
+                });
+            });
+
+            // Display message after Admin Edit form submission
+            function showEditMessage(message) {
+                $("#AdminEditMsgModal #AdminEditMsg").text(message);
+                $("#AdminEditModal").modal("hide");
+                $("#AdminEditMsgModal").modal("show");
+             }
+
+             // Populate Edit User Modal
+             $('#editUserModal').on('show.bs.modal', function (event) {
+                 var button = $(event.relatedTarget);
+                 var userId = button.data('id');
+                 var userName = button.data('name');
+                 var userEmail = button.data('email');
+                 var userPassword = button.data('password');
+
+                 var modal = $(this);
+                 modal.find('#editUserId').val(userId);
+                 modal.find('#editUserName').val(userName);
+                 modal.find('#editUserEmail').val(userEmail);
+                 modal.find('#editUserPassword').val(userPassword);
+             });
+
+            $('#editUserForm').on('submit', function (e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: $(this).attr('method'),
+                    data: formData,
+                    processData:false,
+                    contentType:false,
+                    success: function (response) {
+                        alert(response.message);
+                        $('#editUserModal').modal('hide');
+                    },
+                    error: function (xhr, status, error) {
+                        alert("error occured" + error);
+                    }
+                })
+            })
+
+             // Populate Delete User Modal
+             $('#deleteUserModal').on('show.bs.modal', function (event) {
+                 var button = $(event.relatedTarget);
+                 var userId = button.data('id');
+                 var modal = $(this);
+                 modal.find('#deleteUserId').val(userId);
+
+             });
+
+             //delete user function
+            $('#deleteUserForm').on('submit', function (e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: $(this).attr('method'),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        alert(response.message);
+                        $('#deleteUserModal').modal('hide');
+                    },
+                    error: function (xhr, status, error) {
+                        alert("error occured" + error);
+                    }
+                })
+            })
+
+
+         });
+
+       
+         //search user function
+        function searchTable() {
+            var input = document.getElementById("myInput").value.toUpperCase();
+            var table = document.getElementById("myTable");
+            var rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+            for (var i = 0; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName("td");
+                var cellText = "";
+
+
+                if (cells.length > 1) {
+                    cellText += cells[1].textContent.toUpperCase();
+                }
+                if (cells.length > 2) {
+                    cellText += " " + cells[2].textContent.toUpperCase();
+                }
+
+                if (cellText.includes(input)) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+
+        //search user by role function
+        function searchUserRole() {
+            var input = document.getElementById("myRoleInput").value.toUpperCase();
+            var table = document.getElementById("myTable");
+            var rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+            for (var i = 0; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName("td");
+                var userRole = cells[4].textContent.toUpperCase();
+                if (userRole.includes(input)) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+
+
+    </script>
+</body>
+</html>

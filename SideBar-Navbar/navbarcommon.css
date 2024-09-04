@@ -1,0 +1,232 @@
+﻿.company-logo {
+    display: inline-block;
+}
+
+    .company-logo img {
+        width: 100px;
+        height: auto;
+        display: block;
+    }
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #00000013;
+}
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 100%;
+    background: #3ABEF9 ;
+    padding: 5px 5px;
+    transition: width 300ms;
+}
+
+    nav.close {
+        width: 73px;
+    }
+
+    nav .logo_name {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+        nav .logo_name i {
+            font-size: 28px;
+            color: #fff;
+        }
+
+        nav .logo_name .logo_name {
+            font-size: 22px;
+            color: #fff;
+            margin-left: 10px;
+            font-weight: 600;
+        }
+
+    nav ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+        nav ul li {
+            position: relative;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+            nav ul li a {
+                display: flex;
+                align-items: center;
+                color: #fff;
+                font-size: 16px;
+                font-weight: 500;
+                text-decoration: none;
+                padding: 10px;
+                border-radius: 5px;
+                transition: background 300ms;
+            }
+
+                nav ul li a i {
+                    font-size: 20px;
+                }
+
+                nav ul li a .link-name {
+                    margin-left: 10px;
+                }
+
+                nav ul li a:hover {
+                    background: #fff;
+                    color: #1d1b31;
+                }
+
+.dashboard {
+    position: relative;
+    left: 200px;
+    width: calc(100% - 195px);
+    padding: 10px;
+    transition: left 300ms, width 300ms;
+}
+
+    .dashboard .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 15px;
+    }
+
+.profile {
+    display: flex;
+    align-items: center;
+}
+
+.dashboard {
+    padding: 5px;
+}
+
+.logout {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+    .logout button {
+        background: #C63C51;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 300ms;
+    }
+
+        .logout button:hover {
+            background: #e60000;
+        }
+
+.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #00000013;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.profile .link-name {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+
+
+.dashboard .dash-content .boxes {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.dashboard .dash-content .box {
+    flex: 1;
+    min-width: calc(5% - 15px);
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+    .dashboard .dash-content .box i {
+        font-size: 30px;
+        color: #1d1b31;
+        margin-bottom: 0px;
+    }
+
+    .dashboard .dash-content .box .text {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 2px;
+    }
+
+    .dashboard .dash-content .box .number {
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+.dashboard .activity {
+    margin-top: 15px;
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+    .dashboard .activity .title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .dashboard .activity .activity-data {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+        .dashboard .activity .activity-data .data {
+            flex: 1;
+            min-width: 100px;
+        }
+
+            .dashboard .activity .activity-data .data .data-title {
+                font-size: 16px;
+                font-weight: 500;
+                margin-bottom: 10px;
+            }
+
+            .dashboard .activity .activity-data .data .data-list {
+                font-size: 14px;
+                margin-bottom: 5px;
+            }

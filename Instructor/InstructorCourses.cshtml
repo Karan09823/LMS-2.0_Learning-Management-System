@@ -1,0 +1,340 @@
+﻿
+
+@{
+    Layout = null;
+    var instructorObject = ViewBag.Instructor as LMS.Models.InstructorModel;
+    var courses = ViewBag.courses as List<LMS.Models.CourseData>;
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>LMS : Instructor_Courses</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="~/Content/SideBar-Navbar/navbarcommon.css" rel="stylesheet" />
+
+    <style>
+        .card {
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+            max-width: 300px;
+            margin: 2px;
+            background-color: #D1E9F6;
+        }
+
+            .card:hover {
+                transform: scale(1.05);
+            }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .card-subtitle {
+            font-size: 1rem;
+            color: #6c757d;
+        }
+
+        .card-text {
+            font-size: 0.875rem;
+            color: #495057;
+        }
+    </style>
+
+
+</head>
+<body>
+    <!--sidebar-->
+    <nav>
+        <div class="logo_name">
+
+            <span class="logo_name mx-4">Instructor</span>
+        </div>
+        <ul>
+            <li>
+                <a href="@Url.Action("InstructorPanel", "Instructor")">
+                    <i class="uil uil-estate"></i>
+                    <span class="link-name">Home</span>
+                </a>
+            </li>
+        </ul>
+
+        <ul>
+            <li>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#InstructorView">
+                    <i class="fa-solid fa-eye"></i>
+                    <span class="link-name"> View Profile</span>
+                </a>
+            </li>
+
+            <li>
+
+                <a href="#" data-bs-toggle="modal" data-bs-target="#InstructorEdit">
+                    <i class="fa-solid fa-user-pen"></i>
+                    <span class="link-name"> Edit Profile</span>
+                </a>
+            </li>
+
+            <li>
+
+                <a href="@Url.Action("AddCourse","Instructor")">
+                    <i class="fa-solid fa-folder-plus"></i>
+                    <span class="link-name"> Add Course</span>
+                </a>
+            </li>
+
+
+        </ul>
+        <div class="logout">
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#InstructorLogout">
+                Logout
+            </button>
+        </div>
+    </nav>
+
+    <!--banner-->
+    <section class="dashboard">
+        <div class="top">
+            <i class="company-logo">
+                <img src="~/HomeBanner/lms_logo-removebg-preview.png" />
+            </i>
+
+            <div class="profile">
+                <span class="link-name mx-4">@instructorObject.InstructorName</span>
+
+                <img src="~/HomeBanner/blank-profile-picture-973460_1280.png" alt="Profile Picture" />
+            </div>
+        </div>
+
+
+
+        <!-- Identities displayed as a table -->
+        <div class="container mt-3">
+            <div class="d-flex align-items-center">
+                <label class="m-1">Search Your Courses: </label>
+                <input id="myInput" class="form-control m-1" autocomplete="off" onkeyup="Searchitem()" style="max-width:500px;" />
+            </div>
+
+            <table class="table table-bordered mt-3" style="border-color:lightsteelblue;" id="myTable">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Course Details</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (courses != null && courses.Any())
+                    {
+                        foreach (var course in courses)
+                        {
+                            <tr>
+                                <td onclick="handleCardClick('@course.CourseCode', '@course.CourseId', '@course.CourseName', '@course.CourseDescription')">
+                                    <img src="~/HomeBanner/CourseImageBanner.jpg" alt="Course Image" class="img-fluid" style="width:150px; height:150px;" />
+                                </td>
+                                <td onclick="handleCardClick('@course.CourseCode', '@course.CourseId', '@course.CourseName', '@course.CourseDescription')">
+                                    <h3 class="card-title">@course.CourseName</h3>
+                                    <h4 class="card-subtitle mb-2">@course.CourseDescription</h4>
+                                    <p class="card-text">Duration: @course.CourseDuration hours</p>
+                                    <p class="card-text">Language: @course.CourseLanguage</p>
+                                    <p class="card-text">Category: @course.CourseCategory</p>
+                                    <p class="card-text">CourseCode: @course.CourseCode</p>
+                                </td>
+                                <td class="text-end d-flex align-items-baseline">
+                                    <button class="btn btn-warning mx-2" data-bs-toggle="modal" data-bs-target="#CourseUpdateModal"
+                                            onclick="PopulateUpdateModal('@course.CourseId', '@course.CourseName', '@course.CourseDescription', '@course.CourseDuration', '@course.CourseLanguage', '@course.CourseCode', '@course.CourseCategory')">
+                                        Update
+                                    </button>
+                                    <button class="btn btn-danger" onclick="deleteCourse('@course.CourseId')">Delete</button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3">No courses available</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+
+    </section>
+    @*Instructor view partial *@
+    @Html.Partial("_InstructorView")
+
+    @*Instructor edit modal*@
+    @Html.Partial("_InstructorEdit")
+
+    @*Instructor logout modal*@
+    @Html.Partial("_InstructorLogout")
+
+    @*instructor edit msg modal*@
+    @Html.Partial("_InstructorEditMsg")
+
+    <!-- Course Update Modal -->
+    <div class="modal fade" id="CourseUpdateModal" tabindex="-1" aria-labelledby="CourseUpdateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #3ABEF9; color: white;">
+                    <h5 class="modal-title" id="CourseUpdateModalLabel">Update Course</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="courseUpdateForm">
+                        <input type="hidden" id="CourseId" name="CourseId" />
+                        <div class="mb-3">
+                            <label for="CourseName" class="form-label">Course Name:</label>
+                            <input type="text" id="CourseName" name="CourseName" class="form-control" autocomplete="off" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="CourseDescription" class="form-label">Description:</label>
+                            <textarea id="CourseDescription" name="CourseDescription" class="form-control"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="CourseDuration" class="form-label">Duration:</label>
+                            <input type="number" id="CourseDuration" name="CourseDuration" class="form-control" autocomplete="off" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="CourseLanguage" class="form-label">Language:</label>
+                            <input type="text" id="CourseLanguage" name="CourseLanguage" class="form-control" autocomplete="off" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="CourseCategory" class="form-label">Category:</label>
+                            <input type="text" id="CourseCategory" name="CourseCategory" class="form-control" autocomplete="off" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="CourseCode" class="form-label">Course Code:</label>
+                            <input type="text" id="CourseCode" name="CourseCode" class="form-control" autocomplete="off" />
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-warning" onclick="UpdateCourseBtn()">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script>
+
+        //redirect to the course further details 
+        function handleCardClick(courseCode, courseId, courseName, courseDescription) {
+            var redirectUrl = '@Url.Action("ShowCourseListUsingCard", "Instructor")' +
+                '?courseId=' + encodeURIComponent(courseId) +
+                '&courseCode=' + encodeURIComponent(courseCode) +
+                '&courseName=' + encodeURIComponent(courseName) +
+                '&courseDescription=' + encodeURIComponent(courseDescription);
+
+            window.location.href = redirectUrl;
+        }
+
+        // Search table items
+        function Searchitem() {
+            var input = document.getElementById("myInput").value.toLowerCase();
+            var rows = document.querySelectorAll("#myTable tbody tr");
+
+            rows.forEach(function (row) {
+                var courseDetails = row.querySelector("td:nth-child(2)").textContent.toLowerCase();
+                if (courseDetails.includes(input)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+
+
+        // Populate the Course Update Modal with course details
+        function PopulateUpdateModal(CourseId, CourseName, CourseDescription, CourseDuration, CourseLanguage, CourseCode, CourseCategory) {
+            $('#CourseId').val(CourseId);
+            $('#CourseName').val(CourseName);
+            $('#CourseDescription').val(CourseDescription);
+            $('#CourseDuration').val(CourseDuration);
+            $('#CourseLanguage').val(CourseLanguage);
+            $('#CourseCategory').val(CourseCategory);
+            $('#CourseCode').val(CourseCode);
+        }
+
+        // Handle course deletion
+        function deleteCourse(courseId) {
+            if (confirm("Are you sure you want to delete this course?")) {
+                $.ajax({
+                    url: '@Url.Action("DeleteCourse", "Instructor")',
+                    type: 'POST',
+                    data: { courseId: courseId },
+                    success: function (response) {
+                        alert(response.message);
+                        location.reload();
+                    },
+                    error: function (response) {
+                        var errorMessage = response.responseJSON ? response.responseJSON.message : "An error occurred";
+                        alert(errorMessage);
+                    }
+                });
+            }
+        }
+
+        //course update
+        function UpdateCourseBtn() {
+            var form = document.getElementById('courseUpdateForm');
+            var data = new FormData(form);
+
+            fetch("@Url.Action("UpdateCourse", "Instructor")", {
+                method: "POST",
+                body: data
+            })
+            .then(response => {
+                if (response.ok) {
+                    $('#CourseUpdateModal').modal("hide");
+                    alert("Course Updated successfully.");
+                    location.reload();
+                } else {
+                    $('#CourseUpdateModal').modal('hide');
+                    alert("Failed to update course.");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+
+
+        $(document).ready(function () {
+            //logout function
+             $("#logoutButton").on('click', function () {
+                 $.ajax({
+                     url: '@Url.Action("Instructorlogout", "Instructor")',
+                     type: 'POST',
+                     success: function (response) {
+                         if (response.success) {
+                             window.location.href = '@Url.Action("Welcome", "Home")';
+                         } else {
+                             alert(response.message);
+                         }
+                     },
+                     error: function (xhr, status, error) {
+                         alert("An error occurred: " + error);
+                     }
+                 });
+             });
+
+        });
+
+
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+﻿@{ 
+    var instructorObject = ViewBag.Instructor;
+
+}
+
+
+@*Instructor view*@
+<div class="modal fade" id="InstructorView" tabindex="-1" aria-labelledby="InstructorViewLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #3ABEF9; color: white;">
+                <h5 class="modal-title">Your Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="InstructorName" class="form-label">Name:</label>
+                    <p id="InstructorName" class="form-text">@instructorObject.InstructorName</p>
+                </div>
+                <div class="mb-3">
+                    <label for="InstructorEmail" class="form-label">Email:</label>
+                    <p id="InstructorEmail" class="form-text">@instructorObject.InstructorEmail</p>
+                </div>
+                <div class="mb-3">
+                    <label for="InstructorPassword" class="form-label">Password:</label>
+                    <p id="InstructorPassword" class="form-text">@instructorObject.InstructorPassword</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
