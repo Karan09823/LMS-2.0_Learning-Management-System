@@ -1,0 +1,228 @@
+﻿
+@{
+    Layout = null;
+    var instructorModel = ViewBag.Instructor as LMS.Models.InstructorModel;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>LMS : Instructor_Learner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="~/Content/SideBar-Navbar/navbarcommon.css" rel="stylesheet" />
+  
+    <style>
+        .form-inline {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .container {
+            background-color: #f0f0f0; 
+            padding: 5px; 
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+        }
+
+        .card {
+            width: 85%;
+            margin-left: 200px;
+        }
+    </style>
+</head>
+<body>
+
+    @Html.Partial("_InstructorModals")
+    @Html.Partial("_InstructorLayout")
+
+    <!--banner-->
+    <section class="dashboard">
+        <div class="top">
+            <i class="company-logo">
+                <img src="~/HomeBanner/lms_logo-removebg-preview.png" />
+            </i>
+
+            <div class="profile">
+                <span class="link-name mx-4"></span>
+
+                <img src="~/HomeBanner/blank-profile-picture-973460_1280.png" alt="Profile Picture" />
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Message Modal -->
+    <div class="modal fade" id="msgModal" tabindex="-1" aria-labelledby="msgModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title" id="msginfo"></h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+
+            //assign the course function
+            $('#activateLearner').on('submit', function (event) {
+                event.preventDefault();
+
+
+                var selectedOption = $('#courseSelect').find('option:selected').text();
+                var SeperatecourseName = selectedOption.split('-').slice(1).join('-').trim();
+
+                var formData = {
+                    instructorId: $('#instructorid').val(),
+                    instructorName: $('#instructorname').val(),
+                    learnerEmail: $('#learnerEmail').val(),
+                    courseCode: $('#courseSelect').val(),
+                    courseName: SeperatecourseName
+                };
+
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: formData,
+                    success: function (response) {
+                        $('#msgModal #msginfo').text(response.message);
+                        $('#msgModal').modal("show");
+                    },
+                    error: function (xhr, status, error) {
+                        $('#msgModal #msginfo').text(error);
+                        $('#msgModal').modal("show");
+                    }
+                });
+            });
+
+            // Deallocate course function
+            $(document).on('click', '#deactivateBtn', function (e) {
+                e.preventDefault();
+
+
+                var learnerId = $(this).data('learner-id');
+                var instructorId = $(this).data('instructor-id');
+                var courseCode = $(this).data('course-code');
+
+
+                var formData = {
+                    learnerId: learnerId,
+                    instructorId: instructorId,
+                    courseCode: courseCode
+                };
+
+
+                $.ajax({
+                    url: '@Url.Action("DeactivateLearner", "Instructor")',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        $('#msgModal #msginfo').text(response.message);
+                        $('#msgModal').modal("show");
+                    },
+                    error: function (xhr, status, error) {
+                        $('#msgModal #msginfo').text(error);
+                        $('#msgModal').modal("show");
+                    }
+                });
+            });
+
+
+
+        });
+
+
+        $(document).ready(function () {
+
+            $("#logoutButton").on('click', function () {
+                $.ajax({
+                    url: '@Url.Action("Instructorlogout", "Instructor")',
+                    type: 'POST',
+                    success: function (response) {
+                        if (response.success) {
+                            window.location.href = '@Url.Action("Welcome", "Home")';
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert("An error occurred: " + error);
+                    }
+                });
+            });
+
+            // Instructor Edit Form Validation and Submission
+            $("#InstructorEditForm").validate({
+                errorClass: "error",
+                rules: {
+                    InstructorNameEdit: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 20
+                    },
+                    InstructorPasswordEdit: {
+                        required: true,
+                        minlength: 6
+                    }
+                },
+                messages: {
+                    InstructorNameEdit: {
+                        required: "Name field cannot be empty",
+                        minlength: "Name must be at least 3 characters",
+                        maxlength: "Name must not exceed 20 characters"
+                    },
+                    InstructorPasswordEdit: {
+                        required: "Password field cannot be empty",
+                        minlength: "Password must be at least 6 characters"
+                    }
+                }
+            });
+
+            $("#InstructorUpdateBtn").on('click', function (e) {
+                e.preventDefault();
+                if ($("#InstructorEditForm").valid()) {
+                    var formData = new FormData($("#InstructorEditForm")[0]);
+
+                    $.ajax({
+                        url: $("#InstructorEditForm").attr("action"),
+                        type: $("#InstructorEditForm").attr("method"),
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            alert(response.message);
+                            setInterval(function () { location.reload(); }, 1000)
+
+                        },
+                        error: function (response) {
+                            var errorMessage = response.responseJSON ? response.responseJSON.message : "An error occurred";
+                            alert(errorMessage);
+                            setInterval(function () { location.reload(); }, 1000)
+
+                        }
+                    });
+                }
+            });
+
+            function showEditMessage(message) {
+                $("#InstructorEditMsgModal #InstructorEditMsg").text(message);
+                $("#InstructorEdit").modal("hide");
+                $("#InstructorEditMsgModal").modal("show");
+            }
+        });
+
+
+    </script>
+</body>
+</html>

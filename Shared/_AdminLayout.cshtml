@@ -1,0 +1,65 @@
+﻿@{
+    var adminModel = ViewBag.AdminModel;
+}
+
+<!--sidebar-->
+<nav>
+    <div class="logo_name">
+
+        <span class="logo_name mx-4 ">ADMIN</span>
+    </div>
+    <ul>
+        <li>
+            <a href="@Url.Action("AdminPanel", "Admin")">
+                <i class="uil uil-estate"></i>
+                <span class="link-name">Home</span>
+            </a>
+        </li>
+        <li>
+
+            <a href="#" class="" data-bs-toggle="modal" data-bs-target="#AdminViewModal">
+                <i class="fa-solid fa-eye"></i>
+                <span class="link-name"> View Profile</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="#" class="" data-bs-toggle="modal" data-bs-target="#AdminEditModal">
+                <i class="fa-solid fa-user-pen"></i>
+                <span class="link-name">Edit Profile</span>
+            </a>
+        </li>
+
+
+        <li>
+
+            <a href="@Url.Action("AddCourseByAdmin","Admin")">
+                <i class="fa-solid fa-folder-plus"></i>
+                <span class="link-name"> Add Course</span>
+            </a>
+        </li>
+        <li>
+            <a href="@Url.Action("Admin_courses", "Admin")">
+                <i class="uil uil-book"></i>
+                <span class="link-name">Courses</span>
+            </a>
+        </li>
+        <li>
+            <a href="@Url.Action("Admin_Learner", "Admin")">
+                <i class="fa-solid fa-file-circle-check"></i>
+                <span class="link-name">Assign Course</span>
+            </a>
+        </li>
+
+
+
+
+    </ul>
+    <div class="logout">
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#AdminLogout">
+            Logout
+        </button>
+    </div>
+</nav>
+
+

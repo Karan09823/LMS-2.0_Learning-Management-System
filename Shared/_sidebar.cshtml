@@ -1,0 +1,49 @@
+﻿<nav>
+    <div class="logo_name">
+
+        <span class="logo_name">Dashboard</span>
+    </div>
+    <ul>
+        <li>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#InstructorView">
+                <i class="fa-solid fa-eye"></i>
+                <span class="link-name"> View Profile</span>
+            </a>
+        </li>
+
+        <li>
+
+            <a href="#" data-bs-toggle="modal" data-bs-target="#InstructorEdit">
+                <i class="fa-solid fa-user-pen"></i>
+                <span class="link-name"> Edit Profile</span>
+            </a>
+        </li>
+
+        <li>
+
+            <a href="@Url.Action("AddCourse","Instructor")">
+                <i class="fa-solid fa-folder-plus"></i>
+                <span class="link-name"> Add Course</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="@Url.Action("InstructorCourses", "Instructor")">
+                <i class="uil uil-book"></i>
+                <span class="link-name">Courses</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="@Url.Action("InstructorLearner", "Instructor")">
+                <i class="uil uil-user-plus"></i>
+                <span class="link-name">Learners</span>
+            </a>
+        </li>
+    </ul>
+    <div class="logout">
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#InstructorLogout">
+            Logout
+        </button>
+    </div>
+</nav>

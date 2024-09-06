@@ -1,0 +1,369 @@
+﻿@{
+    Layout = null;
+    var adminModel = ViewBag.AdminModel;
+    var courseList = ViewBag.Courses as List<LMS.Models.CourseData>;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>LMS : Admin_Courses</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="~/Content/SideBar-Navbar/navbarcommon.css" rel="stylesheet" />
+
+    <style>
+        .card {
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+            max-width: 300px;
+            margin: 2px;
+            background-color: #D1E9F6;
+        }
+
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .card-subtitle {
+            font-size: 1rem;
+            color: #6c757d;
+        }
+
+        .card-text {
+            font-size: 0.875rem;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    @Html.Partial("_AdminLayout")
+    @Html.Partial("_AdminModals")
+
+    <section class="dashboard">
+        <div class="top">
+            <i class="company-logo">
+                <img src="~/HomeBanner/lms_logo-removebg-preview.png" />
+            </i>
+            <div class="profile">
+                <span class="link-name mx-4">@adminModel.Admin_Name</span>
+                <img src="~/HomeBanner/blank-profile-picture-973460_1280.png" alt="Profile Picture" />
+            </div>
+        </div>
+        <!-- Courses displayed as cards -->
+        <div class="container mt-3">
+            <div class="container-fluid d-flex align-items-center p-2" style="background-color:lightgrey; border-radius:5px 5px 5px 5px;">
+                <label class="m-1 mx-2">Search Your Courses: </label>
+                <input id="myInput" class="form-control m-1" autocomplete="off" onkeyup="Searchitem()" style="max-width:500px;" />
+            </div>
+
+            <div id="noRecordsMessage" style="display:none;"><h3 class="mx-2">No records found</h3></div>
+            <table class="table mt-3 " id="myTable" style="background-color:lightgrey; border-radius:5px 5px 5px 5px;">
+
+                <tbody>
+                    @if (courseList != null && courseList.Any())
+                    {
+                        foreach (var course in courseList)
+                        {
+                            <tr>
+                                <td onclick="handleCardClick('@course.CourseCode', '@course.CourseId', '@course.CourseName', '@course.CourseDescription')">
+                                    <img src="~/HomeBanner/CourseImageBanner.jpg" alt="Course Image" class="img-fluid" style="width:200px; height:150px; margin-left:10px; margin-top:10px;" />
+                                </td>
+                                <td onclick="handleCardClick('@course.CourseCode', '@course.CourseId', '@course.CourseName', '@course.CourseDescription')">
+                                    <h3 class="card-title">@course.CourseName</h3>
+                                    <h4 class="card-subtitle mb-2">@course.CourseDescription</h4>
+                                    <p class="card-text">Duration: @course.CourseDuration hours</p>
+                                    <p class="card-text">Language: @course.CourseLanguage</p>
+                                    <p class="card-text">Category: @course.CourseCategory</p>
+                                    <p class="card-text">CourseCode: @course.CourseCode</p>
+                                </td>
+                                <td>
+                                    <button class="btn btn-warning mx-2" data-bs-toggle="modal" data-bs-target="#CourseUpdateModal"
+                                            onclick="PopulateUpdateModal('@course.CourseId', '@course.CourseName', '@course.CourseDescription', '@course.CourseDuration', '@course.CourseLanguage', '@course.CourseCode', '@course.CourseCategory')">
+                                        Update
+                                    </button>
+
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger" onclick="deleteCourse('@course.CourseId')">Delete</button>
+                                </td>
+                            </tr>
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3">No courses available</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+
+    <!-- Course Update Modal -->
+    <div class="modal fade" id="CourseUpdateModal" tabindex="-1" aria-labelledby="CourseUpdateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #3ABEF9; color: white;">
+                    <h5 class="modal-title" id="CourseUpdateModalLabel">Update Course</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="courseUpdateForm">
+                        <input type="hidden" id="CourseId" name="CourseId" />
+                        <div class="mb-3">
+                            <label for="CourseName" class="form-label">Course Name:</label>
+                            <input type="text" id="CourseName" name="CourseName" class="form-control" autocomplete="off" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="CourseDescription" class="form-label">Description:</label>
+                            <textarea id="CourseDescription" name="CourseDescription" class="form-control"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="CourseDuration" class="form-label">Duration:</label>
+                            <input type="number" id="CourseDuration" name="CourseDuration" class="form-control" autocomplete="off" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="CourseLanguage" class="form-label">Language:</label>
+                            <input type="text" id="CourseLanguage" name="CourseLanguage" class="form-control" autocomplete="off" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="CourseCategory" class="form-label">Category:</label>
+                            <input type="text" id="CourseCategory" name="CourseCategory" class="form-control" autocomplete="off" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="CourseCode" class="form-label">Course Code:</label>
+                            <input type="text" id="CourseCode" name="CourseCode" class="form-control" autocomplete="off" />
+                        </div>
+                    </form>
+
+                </div>
+                <button type="button" class="btn btn-warning" onclick="UpdateCourseBtn()">Update</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
+    <script>
+        // Function to handle card click and redirect
+        function handleCardClick(courseCode, courseId, courseName, courseDescription) {
+            var redirectUrl = '@Url.Action("ShowCourseListUsingCard", "Admin")' +
+                '?courseId=' + encodeURIComponent(courseId) +
+                '&courseCode=' + encodeURIComponent(courseCode) +
+                '&courseName=' + encodeURIComponent(courseName) +
+                '&courseDescription=' + encodeURIComponent(courseDescription);
+
+            window.location.href = redirectUrl;
+        }
+
+        //course update
+        function UpdateCourseBtn() {
+            var form = document.getElementById('courseUpdateForm');
+            var data = new FormData(form);
+
+            fetch("@Url.Action("UpdateCourse", "Admin")", {
+            method: "POST",
+            body: data
+            })
+            .then(response => {
+                if (response.ok) {
+                    $('#CourseUpdateModal').modal("hide");
+                    alert("Course Updated successfully.");
+                    location.reload();
+                } else {
+                    $('#CourseUpdateModal').modal('hide');
+                    alert("Failed to update course.");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+
+        }
+
+        //course update form validation
+        $("#courseUpdateForm").validate({
+            rules: {
+
+                CourseName: {
+                    required: true,
+                    minlength: 3
+                },
+                CourseDescription: {
+                    required: true
+                },
+                CourseDuration: {
+                    required: true,
+                    min: 1
+                },
+                CourseLanguage: {
+                    required: true
+                },
+                CourseCategory: {
+                    required: true
+                },
+                CourseCode: {
+                    required: true
+                }
+            }
+        });
+
+
+
+        // Handle course deletion
+        function deleteCourse(courseId) {
+            if (confirm("Are you sure you want to delete this course?")) {
+                $.ajax({
+                    url: '@Url.Action("DeleteCourse", "Admin")',
+                    type: 'POST',
+                    data: { courseId: courseId },
+                    success: function (response) {
+                        alert(response.message);
+                        location.reload();
+                    },
+                    error: function (response) {
+                        var errorMessage = response.responseJSON ? response.responseJSON.message : "An error occurred";
+                        alert(errorMessage);
+                    }
+                });
+            }
+        }
+
+        // Search table items
+        function Searchitem() {
+
+            var input = document.getElementById("myInput").value.toLowerCase();
+            var rows = document.querySelectorAll("#myTable tbody tr");
+            var noRecordsMessage = document.getElementById("noRecordsMessage");
+            var visibleRowFound = false;
+
+            rows.forEach(function (row) {
+                var courseDetails = row.querySelector("td:nth-child(2)").textContent.toLowerCase();
+                if (courseDetails.includes(input)) {
+                    row.style.display = "";
+                    visibleRowFound = true;
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            // Show or hide the "No records found" message based on the visibility of rows
+            if (noRecordsMessage) {
+                noRecordsMessage.style.display = visibleRowFound ? "none" : "block";
+            }
+        }
+
+
+
+        // Populate the Course Update Modal with course details
+        function PopulateUpdateModal(CourseId, CourseName, CourseDescription, CourseDuration, CourseLanguage, CourseCode, CourseCategory) {
+            $('#CourseId').val(CourseId);
+            $('#CourseName').val(CourseName);
+            $('#CourseDescription').val(CourseDescription);
+            $('#CourseDuration').val(CourseDuration);
+            $('#CourseLanguage').val(CourseLanguage);
+            $('#CourseCategory').val(CourseCategory);
+            $('#CourseCode').val(CourseCode);
+        }
+
+
+
+
+        $(document).ready(function () {
+
+            // Populate Edit Modal with current admin details
+            $('#AdminEditModal').on('show.bs.modal', function () {
+                var modal = $(this);
+                modal.find('#AdminNameEdit').val('@adminModel.Admin_Name');
+                modal.find('#AdminPasswordEdit').val('@adminModel.Admin_password');
+            });
+
+            // Handle Admin Edit Form submission
+            $("#AdminEditModalUpdate").click(function (e) {
+                e.preventDefault();
+
+                if ($("#adminEditForm").valid()) {
+                    var formData = new FormData($("#adminEditForm")[0]);
+
+                    $.ajax({
+                        url: $("#adminEditForm").attr("action"),
+                        type: $("#adminEditForm").attr("method"),
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            showEditMessage(response.message);
+                        },
+                        error: function (response) {
+                            var errorMessage = response.responseJSON ? response.responseJSON.message : "An error occurred";
+                            showEditMessage(errorMessage);
+                        }
+                    });
+                }
+            });
+
+            // Admin Edit Form validation
+            $("#adminEditForm").validate({
+                errorClass: "error",
+                rules: {
+                    AdminName: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 20
+                    },
+                    AdminPassword: {
+                        required: true,
+                        minlength: 6
+                    }
+                },
+                messages: {
+                    AdminName: {
+                        required: "Name field cannot be empty",
+                        minlength: "Name must be at least 3 characters",
+                        maxlength: "Name must not exceed 20 characters"
+                    },
+                    AdminPassword: {
+                        required: "Password field cannot be empty",
+                        minlength: "Password must be at least 6 characters"
+                    }
+                }
+            });
+
+            // Reset and reload Admin Edit Form
+            $("#closebtn").click(function () {
+                $("#adminEditForm")[0].reset();
+                window.location.reload();
+            });
+
+            // Handle Admin Logout
+            $("#logoutButton").click(function () {
+                $.ajax({
+                    url: '@Url.Action("Adminlogout", "Admin")',
+                    type: 'POST',
+                    success: function (response) {
+                        if (response.success) {
+                            // Redirect to login page
+                            window.location.href = '@Url.Action("Welcome", "Home")'; // Adjust to your login route
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert("An error occurred: " + error);
+                    }
+                });
+            });
+
+        });
+
+
+    </script>
+</body>
+</html>

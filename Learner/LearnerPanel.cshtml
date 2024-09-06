@@ -1,0 +1,191 @@
+﻿@{
+    Layout = null;
+    var learnerObj = ViewBag.learnerModel;
+
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>LMS : Learner_Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="~/Content/SideBar-Navbar/navbarcommon.css" rel="stylesheet" />
+   
+
+</head>
+<body>
+
+    @Html.Partial("_LearnerModals")
+
+    <!--sidebar -->
+    <nav>
+        <div class="logo_name">
+
+            <span class="logo_name">Dashboard</span>
+        </div>
+        <ul>
+
+            <li>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#LearnerView">
+                    <i class="fa-solid fa-eye"></i>
+                    <span class="link-name"> View Profile</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#LearnerEdit">
+                    <i class="fa-solid fa-user-pen"></i>
+                    <span class="link-name"> Edit Profile</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="@Url.Action("LearnerCourses","Learner")">
+                    <i class="fa-solid fa-book"></i>
+                    <span class="link-name"> Courses</span>
+                </a>
+            </li>
+        </ul>
+        <div class="logout">
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#LearnerLogout">
+                Logout
+            </button>
+
+        </div>
+    </nav>
+
+    <!--Banner -->
+
+    <section class="dashboard">
+        <div class="top">
+            <i class="company-logo">
+                <img src="~/HomeBanner/lms_logo-removebg-preview.png" />
+            </i>
+
+            <div class="profile">
+                <span class="link-name mx-4">@learnerObj.LearnerName </span>
+
+                <img src="~/HomeBanner/blank-profile-picture-973460_1280.png" alt="Profile Picture" />
+            </div>
+        </div>
+
+    </section>
+
+    <div class="container bg-info " style="max-width:500px;">
+        <h1 style="margin-left:140px;">DashBoard</h1>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+   
+    <script>
+         $(document).ready(function () {
+
+       // Handle learner Logout
+       $("#logoutButton").click(function (e) {
+           e.preventDefault();
+           $.ajax({
+               url: '@Url.Action("LearnerLogout", "Learner")',
+               type: 'POST',
+               success: function (response) {
+                   if (response.success) {
+
+                       window.location.href = '@Url.Action("Welcome", "Home")';
+                   } else {
+                       alert(response.message);
+                   }
+               },
+               error: function (xhr, status, error) {
+                   alert("An error occurred: " + error);
+               }
+           });
+       });
+
+     //edit modal refresh
+     $("#closebtn").click(function () {
+         $("#LearnerEditForm")[0].reset();
+         window.location.reload();
+     })
+
+     // Handle learner Edit Form submission
+     $("#LearnerUpdateBtn").click(function (e) {
+         e.preventDefault();
+
+         if ($("#LearnerEditForm").valid()) {
+             var formData = new FormData($("#LearnerEditForm")[0]);
+
+             $.ajax({
+                 url: $("#LearnerEditForm").attr("action"),
+                 type: $("#LearnerEditForm").attr("method"),
+                 data: formData,
+                 processData: false,
+                 contentType: false,
+                 success: function (response) {
+                     showEditMessage(response.message);
+                 },
+                 error: function (response) {
+                     var errorMessage = response.responseJSON ? response.responseJSON.message : "An error occurred";
+                     showEditMessage(errorMessage);
+                 }
+             });
+         }
+     });
+
+
+
+    /*edit modal validation*/
+     $("#LearnerEdit").validate({
+         errorClass: "error",
+         rules: {
+
+             LearnerEditName: {
+                 required: true,
+                 minlength: 3,
+                 maxlength: 20
+             },
+             LearnerEditEmail: {
+                 required: true,
+                 email: true
+             },
+             LearnerEditPassword: {
+                 required: true,
+                 minlength: 6
+             }
+         },
+
+         messages: {
+             LearnerEditName: {
+                 required: "Name field cannot be empty",
+                 minlength: "Name must  of 3 characters",
+                 maxlength: "Name must not exceed 20 characters"
+             },
+             LearnerEditEmail: {
+                 required: "Email field cannot be empty",
+                 email: "Please enter valid email"
+             },
+             LearnerEditPassword: {
+                 required: "Password field cannot be empty",
+                 minlength:"length of must of 6 characters or more"
+             }
+         }
+
+     });
+
+     // Display message after learner Edit form submission
+     function showEditMessage(message) {
+
+         $("#LearnerEditMsgModal #LearnerEditMsg").text(message);
+         $("#LearnerEdit").modal("hide");
+         $("#LearnerEditMsgModal").modal("show");
+
+
+     }
+ });
+    </script>
+</body>
+</html>

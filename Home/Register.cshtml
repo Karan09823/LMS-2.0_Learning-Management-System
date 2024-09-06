@@ -1,0 +1,254 @@
+﻿@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>LMS : Register</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- FontAwesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        .divider:after,
+        .divider:before {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #eee;
+        }
+
+        .h-custom {
+            height: calc(100% - 73px);
+        }
+
+        .form-control-sm {
+            font-size: 0.875rem; /* Smaller font size */
+            border: 1px solid #ccc; /* Outline */
+        }
+
+        .form-label {
+            font-weight: bold; /* Bold labels */
+            color: black; /* Black labels */
+        }
+
+        .welcome-text {
+            font-size: 2rem; /* Larger font size */
+            font-weight: bold; /* Bold text */
+            color: black; /* Black text color */
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <section class="vh-100">
+        <div class="container-fluid h-custom">
+            <div class="row d-flex justify-content-center align-items-center h-80">
+                <div class="col-md-9 col-lg-6 col-xl-5">
+                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+                         class="img-fluid" alt="Sample image">
+                </div>
+                <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+
+                    <form id="RegisterForm" method="post" action="@Url.Action("checkUserRegister", "Home")">
+                        <div class="text-center">
+                            <p class="welcome-text" style="color:blue">Registration</p>
+                        </div>
+                        <br>
+                        <!-- Role input -->
+                        <div data-mdb-input-init class="form-outline mb-2">
+                            <select id="role" class="form-select form-control-sm" name="role">
+                                <option value="" disabled selected>Select your role</option>
+                                <option value="Instructor">Instructor</option>
+                                <option value="Learner">Learner</option>
+                            </select>
+                        </div>
+
+                        <!-- Name input -->
+                        <div data-mdb-input-init class="form-outline mb-2">
+                            <label class="form-label" for="registername">Name</label>
+                            <input type="text" id="registername" class="form-control form-control-sm" name="registername" autocomplete="off" />
+                        </div>
+
+                        <!-- Email input -->
+                        <div data-mdb-input-init class="form-outline mb-2">
+                            <label class="form-label" for="registeremail">Email address</label>
+                            <input type="email" id="registeremail" class="form-control form-control-sm" name="registeremail" autocomplete="off" />
+                        </div>
+
+                        <!-- Password input -->
+                        <div data-mdb-input-init class="form-outline mb-2">
+                            <label class="form-label" for="registerpassword">Password</label>
+                            <input type="password" id="registerpassword" class="form-control form-control-sm" name="registerpassword" autocomplete="off" />
+                        </div>
+
+                        <!-- confirm Password input -->
+                        <div data-mdb-input-init class="form-outline mb-2">
+                            <label class="form-label" for="confirmpassword">Confirm Password</label>
+                            <input type="password" id="confirmpassword" class="form-control form-control-sm" name="confirmpassword" autocomplete="off" />
+                        </div>
+
+
+
+                        <!-- Enter Key input -->
+                        <div data-mdb-input-init class="form-outline mb-2">
+                            <label class="form-label" for="form3Example6">Enter Key</label>
+                            <input type="text" id="form3Example6" class="form-control form-control-sm" name="registerkey" autocomplete="off" />
+                        </div>
+                        <div class="text-center text-lg-start mt-0 pt-0">
+                            <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg" id="Registerbtn">
+                                Register
+                            </button>
+                            <p class="text-center text-muted mt-2 mb-0">
+                                Already have an account? <a href="/Home/Welcome" class="fw-bold" style="color:blue"><u>Login Here</u></a>
+                            </p>
+                        </div>
+
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Response modal -->
+    <div class="modal fade" id="RegisterModal" tabindex="-1" aria-labelledby="RegisterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p id="message"></p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <!-- jQuery CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- jQuery Validate -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js" integrity="sha512-KFHXdr2oObHKI9w4Hv1XPKc898mE4kgYx58oqsc/JqqdLMDI4YjOLzom+EMlW8HFUd0QfjfAvxSL6sEq/a42fQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        $(document).ready(function () {
+
+
+            $.validator.addMethod("pwcheck", function (value, element) {
+                return this.optional(element) || /^.{6,}$/.test(value);
+            }, "Password must be at least 6 characters long.");
+
+
+            $("#RegisterForm").validate({
+                errorClass: "error",
+                rules: {
+                    registername: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30
+                    },
+                    registeremail: {
+                        required: true,
+                        email: true
+                    },
+                    registerpassword: {
+                        required: true,
+                        minlength: 6
+                    },
+                    confirmpassword: {
+                        required: true,
+                        minlength: 6,
+                        equalTo: "#registerpassword"
+
+                    },
+                    registerkey: {
+                        required: true,
+                        minlength: 6,
+                        maxlength: 6
+                    }
+
+                },
+                messages: {
+                    registername: {
+                        required: "Name field cannot be empty",
+                        minlength: "Name must contain 3 characters",
+                        maxlength: "Name must not exceed 30 characters"
+                    },
+                    registeremail: {
+                        required: "Email field cannot be empty",
+                        email: "Please enter a valid email"
+                    },
+                    registerpassword: {
+                        required: "Password field cannot be empty",
+                        minlength: "Password must be at least 6 characters"
+                    },
+                    confirmpassword: {
+                        required: "Please confirm your password",
+                        minlength: "Confirm Password must be at least 6 characters long",
+                        equalTo: "Passwords do not match"
+
+                    },
+                    registerkey: {
+                        required: "Please enter the special key",
+                        minlength: "Key must be exactly 6 characters",
+                        maxlength: "Key must be exactly 6 characters"
+                    }
+
+                },
+                submitHandler: function (form) {
+                    form.submit();
+                }
+            });
+
+            $("#Registerbtn").click(function (e) {
+                e.preventDefault();
+
+                if ($("#RegisterForm").valid()) {
+                    var formData = new FormData($("#RegisterForm")[0]);
+                    $.ajax({
+                        url: $("#RegisterForm").attr("action"),
+                        type: $("#RegisterForm").attr("method"),
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            $("#RegisterModal #message").text(response.message);
+                            $("#RegisterModal").modal("show");
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1500);
+
+                        },
+                        error: function (jqXHR, textStatus) {
+                            $("#RegisterModal #message").text("Error: " + textStatus);
+                            $("#RegisterModal").modal("show");
+
+                            $("#RegisterModal").modal("show");
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1500);
+
+
+
+                        }
+                    });
+                }
+            });
+
+        });
+
+    </script>
+</body>
+</html>

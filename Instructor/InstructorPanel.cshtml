@@ -1,0 +1,385 @@
+﻿
+@{
+    Layout = null;
+    var instructorObject = ViewBag.Instructor;
+
+    var courselist = ViewBag.CourseDataList as List<LMS.Models.CourseData>;
+    var AssingingLearners = ViewBag.Assigninglearner as List<LMS.Models.LearnerModel>;
+    var activelearner = ViewBag.ActiveLearners as List<LMS.Models.ActiveLearnerModel>;
+
+    var TLearner = ViewBag.TotalLearner;
+    var TInsActiveLearner = ViewBag.TotalInstructorActiveLearner;
+    var TInsCourse = ViewBag.TotalInstructorCourses;
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>LMS : InstructorPanel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="~/Content/SideBar-Navbar/navbarcommon.css" rel="stylesheet" />
+    <style>
+        .form-inline {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+        
+    </style>
+
+</head>
+<body>
+
+   @Html.Partial("_InstructorModals")
+
+   @Html.Partial("_InstructorLayout")
+
+    <!--banner-->
+    <section class="dashboard">
+        <div class="top">
+            <i class="company-logo">
+                <img src="~/HomeBanner/lms_logo-removebg-preview.png" />
+            </i>
+            <div class="profile">
+                <span class="link-name mx-4">@instructorObject.InstructorName</span>
+                <img src="~/HomeBanner/blank-profile-picture-973460_1280.png" alt="Profile Picture" />
+            </div>
+        </div>
+
+        <div class="dash-content">
+            <div class="boxes">
+
+                <div class="box">
+                    <i class="uil uil-user-plus"></i>
+
+                    <span class="text">Total Learners</span>
+                    <span class="number">@TLearner</span>
+                </div>
+                <div class="box">
+                    <i class="fa-solid fa-book-open-reader mt-3"></i>
+                    <span class="text">Total Active Learners</span>
+                    <span class="number">@TInsActiveLearner</span>
+                </div>
+                <div class="box">
+                    <i class="uil uil-book"></i>
+                    <span class="text"> Courses</span>
+                    <span class="number">@TInsCourse</span>
+                </div>
+
+            </div>
+
+            <!--assign course section-->
+            <div class="activity">
+
+                <div class="container">
+
+                    <form class="form-inline" id="activateLearner" method="post" action="@Url.Action("ActivateLearner","Instructor")">
+
+                        <div class="form-group mr-3 mx-1">
+                            <label for="learnerEmail" class="mr-2">Learner Name:</label>
+                            <select class="form-control" id="SelectLearner" name="learnerid" style="width:300px;" required>
+                                <option value="" disabled selected>Select Learner</option>
+                                @if (AssingingLearners != null && AssingingLearners.Any())
+                                {
+                                    foreach (var learner in AssingingLearners)
+                                    {
+                                        <option value="@learner.LearnerId">  @learner.LearnerName </option>
+
+                                    }
+
+                                }
+                                else
+                                {
+                                    <option disabled>No Learner Present</option>
+                                }
+                            </select>
+
+                        </div>
+                        <div class="form-group mr-3">
+                            <label for="ChooseCourse" class="mr-2">Choose Course:</label>
+                            <select class="form-control" id="SelectCourse" name="courseid" style="width:500px;" required>
+                                <option value="" disabled selected>Select Course</option>
+                                @if (courselist != null && courselist.Any())
+                                {
+                                    foreach (var course in courselist)
+                                    {
+                                        <option value="@course.CourseId">@course.CourseName - @course.CourseCode </option>
+
+                                    }
+
+                                }
+                                else
+                                {
+                                    <option disabled>No Course Available</option>
+                                }
+
+                            </select>
+
+                        </div>
+
+
+                        <button type="submit" class="btn btn-success" id="activeButton">Assign</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!--user table-->
+        <div class="card mt-3">
+            <div class="card-header" style="background-color: #3ABEF9; color: white;">
+                <div class="d-flex align-items-center">
+                    Active Learner List
+                    <label class="form-label" style="margin-left:100px;">Search User</label>
+                    <input class="form-control mx-1" style="max-width:200px;" id="myInput" autocomplete="off" onkeyup="Searchitem()" />
+
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="noRecordsMessage" style="display:none;">
+                    <h3 class="mx-2">No records found</h3>
+                </div>
+
+                <table class="table" id="myTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">LearnerId</th>
+                            <th scope="col">LearnerName</th>
+                            <th scope="col">LearnerMail</th>
+                            <th scope="col">CourseId</th>
+                            <th scope="col">CourseName</th>
+                            <th scope="col">OwnerId</th>
+                            <th scope="col">OwnerName</th>
+                            <th scope="col">OwnerEmail</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+
+                        @if (activelearner != null && activelearner.Any())
+                        {
+                            foreach (var Active in activelearner)
+                            {
+                                <tr>
+                                    <td>@Active.LearnerId</td>
+                                    <td>@Active.LearnerName</td>
+                                    <td>@Active.LearnerEmail</td>
+                                    <td>@Active.CourseId</td>
+                                    <td>@Active.CourseName</td>
+                                    <td>@Active.OwnerId</td>
+                                    <td>@Active.OwnerName</td>
+                                    <td>@Active.OwnerEmail</td>
+                                    <td>
+
+                                        <button class="btn-sm btn-danger"
+                                                id="deallocateBtn"
+                                                data-learnerid="@Active.LearnerId"
+                                                data-ownerid="@Active.OwnerId"
+                                                data-courseid="@Active.CourseId"
+                                                data-email="">
+                                            Deallocate
+                                        </button>
+                                    </td>
+
+                                </tr>
+                            }
+
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5">No ActiveLearner Available</td>
+                            </tr>
+
+                        }
+
+
+                    </tbody>
+
+                </table>
+                <div id="noRecordsMessage" style="display:none;"><h3 class="mx-2">No records found</h3></div>
+
+            </div>
+        </div>
+
+
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js" integrity="sha512-KFHXdr2oObHKI9w4Hv1XPKc898mE4kgYx58oqsc/JqqdLMDI4YjOLzom+EMlW8HFUd0QfjfAvxSL6sEq/a42fQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+        function Searchitem() {
+            var input = document.getElementById("myInput").value.toLowerCase();
+            var rows = document.querySelectorAll("#myTable tbody tr");
+            var noRecordsMessage = document.getElementById("noRecordsMessage");
+            var visibleRowFound = false;
+
+            rows.forEach(function (row) {
+                var learnerNameCell = row.querySelector("td:nth-child(2)"); // Targeting LearnerName column (second column)
+                var learnerName = learnerNameCell ? learnerNameCell.textContent.toLowerCase() : "";
+
+                if (learnerName.includes(input)) {
+                    row.style.display = "";
+                    visibleRowFound = true;
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            // Show or hide the "No records found" message based on the visibility of rows
+            noRecordsMessage.style.display = visibleRowFound ? "none" : "block";
+        }
+
+            $(document).ready(function () {
+
+                $("#logoutButton").on('click', function () {
+                    $.ajax({
+                        url: '@Url.Action("Instructorlogout", "Instructor")',
+                        type: 'POST',
+                        success: function (response) {
+                            if (response.success) {
+                                window.location.href = '@Url.Action("Welcome", "Home")';
+                            } else {
+                                alert(response.message);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            alert("An error occurred: " + error);
+                        }
+                    });
+                });
+
+                // Instructor Edit Form Validation and Submission
+                $("#InstructorEditForm").validate({
+                    errorClass: "error",
+                    rules: {
+                        InstructorNameEdit: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 20
+                        },
+                        InstructorPasswordEdit: {
+                            required: true,
+                            minlength: 6
+                        }
+                    },
+                    messages: {
+                        InstructorNameEdit: {
+                            required: "Name field cannot be empty",
+                            minlength: "Name must be at least 3 characters",
+                            maxlength: "Name must not exceed 20 characters"
+                        },
+                        InstructorPasswordEdit: {
+                            required: "Password field cannot be empty",
+                            minlength: "Password must be at least 6 characters"
+                        }
+                    }
+                });
+
+                $("#InstructorUpdateBtn").on('click', function (e) {
+                    e.preventDefault();
+                    if ($("#InstructorEditForm").valid()) {
+                        var formData = new FormData($("#InstructorEditForm")[0]);
+
+                        $.ajax({
+                            url: $("#InstructorEditForm").attr("action"),
+                            type: $("#InstructorEditForm").attr("method"),
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+                                alert(response.message);
+                                setInterval(function () { location.reload(); }, 1000)
+
+                            },
+                            error: function (response) {
+                                var errorMessage = response.responseJSON ? response.responseJSON.message : "An error occurred";
+                                alert(errorMessage);
+                                setInterval(function () { location.reload(); }, 1000)
+
+                            }
+                        });
+                    }
+                });
+
+                function showEditMessage(message) {
+                    $("#InstructorEditMsgModal #InstructorEditMsg").text(message);
+                    $("#InstructorEdit").modal("hide");
+                    $("#InstructorEditMsgModal").modal("show");
+                }
+
+
+                //assign course
+                $('#activateLearner').on('submit', function (event) {
+                    event.preventDefault();
+
+                    var formData = {
+
+                        learnerid: $('#SelectLearner').val(),
+                        courseid: $('#SelectCourse').val()
+
+                    };
+
+
+                    $.ajax({
+                        type: 'POST',
+                        url: $(this).attr('action'), // URL from the form's action attribute
+                        data: formData,
+                        success: function (response) {
+                            alert(response.message);
+                            location.reload();
+                        },
+                        error: function (xhr, status, error) {
+                            alert("error occured" + error);
+                            location.reload();
+                        }
+                    });
+                });
+
+
+               
+
+                $(document).on('click', '#deallocateBtn', function (e) {
+                    e.preventDefault();
+
+                    // Extract data from button attributes
+                    var learnerId = $(this).data('learnerid');
+                    var ownerId = $(this).data('ownerid');
+                    var courseId = $(this).data('courseid');
+
+                    // Prepare form data
+                    var formData = {
+                        learnerId: learnerId,
+                        ownerId: ownerId,
+                        courseId: courseId
+                    };
+
+                    if (confirm("Are you sure you want to deallocate the course?")) {
+                        // Perform AJAX request
+                        $.ajax({
+                            url: '@Url.Action("DeallocateLearner", "Instructor")',
+                            type: 'POST',
+                            data: formData,
+                            traditional: true, // Handle nested objects or arrays properly if needed
+                            success: function (response) {
+                                alert(response.message);
+                                location.reload();
+                            },
+                            error: function (xhr, status, error) {
+                                alert("Error occurred: " + error);
+                                location.reload();
+                            }
+                        });
+                    }
+                });
+            });
+    </script>
+</body>
+</html>
