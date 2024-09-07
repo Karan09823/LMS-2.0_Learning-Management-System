@@ -1,0 +1,97 @@
+//dboperation code 
+public List<CourseData> GetPagedCourseListAdmin(int page, int pageSize)
+ {
+     List<CourseData> pagedCourseList = new List<CourseData>();
+     int offset = (page - 1) * pageSize;
+
+     string query = "SELECT CourseID, CourseName, CourseCode, Description, Category, Duration, Language FROM Courses " +
+                    "ORDER BY CourseID OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
+
+     using (SqlCommand cmd = new SqlCommand(query, Con))
+     {
+         cmd.Parameters.AddWithValue("@Offset", offset);
+         cmd.Parameters.AddWithValue("@PageSize", pageSize);
+
+         SqlDataAdapter adapter = new SqlDataAdapter();
+         adapter.SelectCommand = cmd;
+         DataTable dt = new DataTable();
+         adapter.Fill(dt);
+
+         foreach (DataRow dr in dt.Rows)
+         {
+             pagedCourseList.Add(new CourseData()
+             {
+                 CourseId = Convert.ToInt32(dr["CourseID"]),
+                 CourseName = Convert.ToString(dr["CourseName"]),
+                 CourseCode = Convert.ToString(dr["CourseCode"]),
+                 CourseDescription = Convert.ToString(dr["Description"]),
+                 CourseCategory = Convert.ToString(dr["Category"]),
+                 CourseDuration = Convert.ToInt32(dr["Duration"]),
+                 CourseLanguage = Convert.ToString(dr["Language"])
+             });
+         }
+     }
+
+     return pagedCourseList;
+ }
+
+//controller code
+ public ActionResult Admin_courses(int page=1,int pageSize=3)
+ {
+     var adminModel = Session["AdminModel"] as AdminModel;
+     if (adminModel == null)
+     {
+         return RedirectToAction("Welcome", "Home");
+     }
+
+     /*List<CourseData> AdminCourses = adminOperation.GetCourseListAdmin();*/
+
+     /* ViewBag.Courses = AdminCourses;*/
+     List<CourseData> AdminCourses = adminOperation.GetPagedCourseListAdmin(page, pageSize);
+     int totalCourses = adminOperation.TotalCourseCountDb(); // Method to get total courses count
+
+     ViewBag.Courses = AdminCourses;
+     ViewBag.TotalPages = (int)Math.Ceiling((double)totalCourses / pageSize);
+     ViewBag.CurrentPage = page;
+     ViewBag.AdminModel = adminModel;
+     return View();
+ }
+
+
+//admin_course view page code
+@{
+    Layout = null;
+    var adminModel = ViewBag.AdminModel;
+    var courseList = ViewBag.Courses as List<LMS.Models.CourseData>;
+
+    var totalPages = ViewBag.TotalPages;
+    var currentPage = ViewBag.CurrentPage;
+
+}
+
+
+//after course list
+            <!-- Pagination Controls -->
+
+            <ul class="pagination">
+                @if (ViewBag.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("Admin_courses", new { page = ViewBag.CurrentPage - 1 })">Previous</a>
+                    </li>
+                }
+
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Admin_courses", new { page = i })">@i</a>
+                    </li>
+                }
+
+                @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("Admin_courses", new { page = ViewBag.CurrentPage + 1 })">Next</a>
+                    </li>
+                }
+            </ul>
