@@ -397,28 +397,40 @@
             .catch(error => console.error('Error:', error));
         }
 
-        //delete submodule function
-         function DeleteSubModule() {
-              var form = document.getElementById("deleteSubModuleForm");
-              var data = new FormData(form);
+        //delete submodule section
+  function DeleteSubModule() {
+     
+     var moduleId = document.getElementById("deleteModuleId").value;
+     var submoduleId = document.getElementById("deleteSubmoduleId").value;
 
-              fetch("@Url.Action("DeleteSubModule", "Instructor")", {
-                  method: "POST",
-                  body: data
-              })
-              .then(response => {
-                  if (response.ok) {
-                      $('#deleteSubModuleModal').modal("hide");
-                      alert("SubModule deleted successfully.");
-                      location.reload();
-                  } else {
-                      $('#deleteSubModuleModal').modal('hide');
-                      alert("Failed to delete Submodule.");
-                      location.reload();
-                  }
-              })
-              .catch(error => console.error('Error:', error));
-        }
+     
+     var formData = new FormData();
+     formData.append("moduleId", moduleId);
+     formData.append("submoduleId", submoduleId);
+
+     
+     fetch('@Url.Action("DeleteSubmodule", "Admin")', {
+         method: 'POST',
+         body: formData
+     })
+     .then(response => response.json())
+     .then(result => {
+         if (result.success) {
+             $('#deleteSubModuleModal').modal("hide");
+             alert(result.message);
+             location.reload();
+         } else {
+             $('#deleteSubModuleModal').modal('hide');
+             alert(result.message);
+             location.reload();
+         }
+     })
+     .catch(error => {
+         console.error('Error:', error);
+         $('#deleteSubModuleModal').modal('hide');
+         alert('An error occurred while deleting the submodule.');
+     });
+ }
 
         //populate submodule function
         function PopulateSubmodule(submodulename, moduleid, submoduleid,submodulefile) {
